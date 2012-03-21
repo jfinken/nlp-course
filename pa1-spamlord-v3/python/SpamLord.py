@@ -5,9 +5,13 @@ import os
 import re
 import pprint
 
-my_first_pat = '(\w+)@(\w+).edu'
-epat2 = '(\w+) at (\w+) dot edu'
-epat3 = '(\w+) at (\w+).(\w+).edu'
+pats = [
+        ['\W+\.(\w+)@(\w+).edu', '%s@%s.edu'],
+        #['(\w+)@(\w+).edu', '%s@%s.edu'],
+        ['(\w+)\.(\w+)@(\w+).edu', '%s.%s@%s.edu'],
+        ['(\w+) at (\w+) dot edu', '%s@%s.edu']
+        #['(\w+) at (\w+).(\w+).edu', '%s@%s.%s.edu']
+       ]
 
 """
 Consider a pattern, printf-style string tuple:
@@ -40,12 +44,12 @@ def process_file(name, f):
     # sys.stderr.write('[process_file]\tprocessing file: %s\n' % (path))
     res = []
     for line in f:
-        #matches = re.findall(my_first_pat,line)
-        matches = re.findall(epat3,line)
-        for m in matches:
-            print m
-            email = '%s@%s.%s.edu' % m
-            res.append((name,'e',email))
+        for pat in pats:
+            matches = re.findall(pat[0],line)
+            for m in matches:
+                #print m
+                email = pat[1] % m
+                res.append((name,'e',email))
     return res
 
 """
