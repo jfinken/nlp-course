@@ -5,18 +5,21 @@ import os
 import re
 import pprint
 
+tld = '(edu|com|net|org|gov|biz|xxx|EDU|COM|NET|ORG|GOV|BIZ|XXX)'
 pats = [
-        ['\W+\.(\w+)@(\w+).edu', '%s@%s.edu'],
-        #['(\w+)@(\w+).edu', '%s@%s.edu'],
-        ['(\w+)\.(\w+)@(\w+).edu', '%s.%s@%s.edu'],
-        ['(\w+) at (\w+) dot edu', '%s@%s.edu']
-        #['(\w+) at (\w+).(\w+).edu', '%s@%s.%s.edu']
+        ['[^\w+\.](\w+)@(\w+).'+tld, '%s@%s.%s'],
+        ['(\w+)\.(\w+)@(\w+).'+tld, '%s.%s@%s.%s'],
+        ['(\w+) at (\w+) [a-zA-Z]{2,3} '+tld, '%s@%s.%s'],
+        ['(\w+) @ ([a-zA-Z]{2,3})\.(\w+)\.'+tld,'%s@%s.%s.%s'],
+        ['[^\w+\.](\w+)@([a-zA-Z]{2,3})\.(\w+)\.'+tld,'%s@%s.%s.%s'],
+        ['[^\w+\.](\w+)@([a-zA-Z]{4})\.(\w+)\.'+tld,'%s@%s.%s.%s'],
+        ['(\w+) @ (\w+)\.'+tld, '%s@%s.%s'],
+        ['(\w+) at (\w{2,3}) (\w+) '+tld, '%s@%s.%s.%s'],
+        ['(\w+) at (\w{2,3})\.(\w+)\.'+tld, '%s@%s.%s.%s'],
+        ['(\w+)\.(\w+)@([a-zA-Z]{2,3})\.(\w+)\.'+tld,'%s.%s@%s.%s.%s'],
+        ['(\w+) at (\w{2,3}) dot (\w+) dot '+tld, '%s@%s.%s.%s'],
        ]
 
-"""
-Consider a pattern, printf-style string tuple:
-    '(\w+)@(\w+).com|edu|net|org', '%s@%s.%s' % m
-"""
 
 """ 
 TODO
