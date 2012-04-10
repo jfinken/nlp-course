@@ -36,30 +36,37 @@ class LaplaceBigramLanguageModel:
         else:
             self.prev_words[self.prev_word] = 1.0
         
-        # continue towards Count(bigram) + 1 
+        # continue towards Count(bigram)
         if bigram in self.bigrams:
             self.bigrams[bigram] += 1.0
         else:
             self.bigrams[bigram] = 1.0
-    
+   
+        # update size of the vocabulary
         self.V = len(self.unigrams)
-        self.probs[bigram] = math.log(self.bigrams[bigram] / (self.prev_words[self.prev_word] + self.V))
         self.prev_word = word 
+
+    # build the probabilities
+    for bigram in self.bigrams:
+        prev = bigram.split(" ")[0]
+        self.probs[bigram] = math.log((self.bigrams[bigram]+1.0) /
+                                      (self.prev_words[prev] + self.V))
 
   def score(self, sentence):
     """ Takes a list of strings as argument and returns the log-probability of the 
         sentence using your language model. Use whatever data you computed in train() here.
     """
     score = 0.0
+    c = 0.0
     for token in sentence: # iterate over words in the sentence
         # retrieve Count(prev_word) of bigram
         if token in self.prev_words:
             c = self.prev_words[token]
         else:
-            c = 1.0            
+            c = 0.0            
         bigram = self.prev_word + ' ' + token
-        if bigram in self.bigrams:
-            probability = self.bigrams[bigram]
+        if bigram in self.probs:
+            probability = self.probs[bigram]
         else:
             probability = math.log(1.0 / (c + self.V))
         

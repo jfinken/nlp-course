@@ -29,15 +29,19 @@ class LaplaceUnigramLanguageModel:
         self.N += 1.0
         self.V = len(self.counts)
         # compute running probabilities: Count(word) + 1 / (N + V)
-        self.probs[word] = math.log( self.counts[word] / (self.N + self.V) )
-        
+        # self.probs[word] = math.log( self.counts[word] / (self.N + self.V) )
+
+    #print "size of v: "+str(self.V)
+    for word in self.counts:
+      self.probs[word] = math.log( (self.counts[word]+1.0) / (self.N + self.V) )
+
   def score(self, sentence):
     """ Takes a list of strings as argument and returns the log-probability of the 
         sentence using your language model. Use whatever data you computed in train() here.
     """
     score = 0.0
     for token in sentence: # iterate over words in the sentence
-      # retrieve: (C(w) + 1) / (N + V), from trained dicts
+      # retrieve: (C(w) + 1) / (N + V), from model
       if token in self.probs:
         probability = self.probs[token]
       else:
