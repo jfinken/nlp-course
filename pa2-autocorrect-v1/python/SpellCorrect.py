@@ -118,23 +118,23 @@ def main():
   #laplaceUnigramOutcome = laplaceUnigramSpell.evaluate(devCorpus)
   #print str(laplaceUnigramOutcome)
 
-  print 'Laplace Bigram Language Model: '
-  laplaceBigramLM = LaplaceBigramLanguageModel(trainingCorpus)
-  laplaceBigramSpell = SpellCorrect(laplaceBigramLM, trainingCorpus)
-  laplaceBigramOutcome = laplaceBigramSpell.evaluate(devCorpus)
-  print str(laplaceBigramOutcome)
+  # print 'Laplace Bigram Language Model: '
+  # laplaceBigramLM = LaplaceBigramLanguageModel(trainingCorpus)
+  # laplaceBigramSpell = SpellCorrect(laplaceBigramLM, trainingCorpus)
+  # laplaceBigramOutcome = laplaceBigramSpell.evaluate(devCorpus)
+  # print str(laplaceBigramOutcome)
 
-  #print 'Stupid Backoff Language Model: '  
-  # sbLM = StupidBackoffLanguageModel(trainingCorpus)
-  # sbSpell = SpellCorrect(sbLM, trainingCorpus)
-  # sbOutcome = sbSpell.evaluate(devCorpus)
-  # print str(sbOutcome)
+  print 'Stupid Backoff Language Model: '  
+  sbLM = StupidBackoffLanguageModel(trainingCorpus)
+  sbSpell = SpellCorrect(sbLM, trainingCorpus)
+  sbOutcome = sbSpell.evaluate(devCorpus)
+  print str(sbOutcome)
 
-  # print 'Custom Language Model: '
-  # customLM = CustomLanguageModel(trainingCorpus)
-  # customSpell = SpellCorrect(customLM, trainingCorpus)
-  # customOutcome = customSpell.evaluate(devCorpus)
-  # print str(customOutcome)
+  print 'Custom Language Model: '
+  customLM = CustomLanguageModel(trainingCorpus)
+  customSpell = SpellCorrect(customLM, trainingCorpus)
+  customOutcome = customSpell.evaluate(devCorpus)
+  print str(customOutcome)
 
 if __name__ == "__main__":
     main()
