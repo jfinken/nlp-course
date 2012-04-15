@@ -112,11 +112,11 @@ def main():
   #uniformOutcome = uniformSpell.evaluate(devCorpus) 
   #print str(uniformOutcome)
 
-  #print 'Laplace Unigram Language Model: ' 
-  #laplaceUnigramLM = LaplaceUnigramLanguageModel(trainingCorpus)
-  #laplaceUnigramSpell = SpellCorrect(laplaceUnigramLM, trainingCorpus)
-  #laplaceUnigramOutcome = laplaceUnigramSpell.evaluate(devCorpus)
-  #print str(laplaceUnigramOutcome)
+  print 'Laplace Unigram Language Model: ' 
+  laplaceUnigramLM = LaplaceUnigramLanguageModel(trainingCorpus)
+  laplaceUnigramSpell = SpellCorrect(laplaceUnigramLM, trainingCorpus)
+  laplaceUnigramOutcome = laplaceUnigramSpell.evaluate(devCorpus)
+  print str(laplaceUnigramOutcome)
 
   # print 'Laplace Bigram Language Model: '
   # laplaceBigramLM = LaplaceBigramLanguageModel(trainingCorpus)
