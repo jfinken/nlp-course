@@ -16,6 +16,8 @@ import sys
 import getopt
 import os
 import math
+import collections
+import operator
 
 class NaiveBayes:
   class TrainSplit:
@@ -40,6 +42,14 @@ class NaiveBayes:
     self.stopList = set(self.readFile('../data/english.stop'))
     self.numFolds = 10
 
+    self.totalDocs = 0.0
+    self.V = 0.0          # total vocabulary size (unique tokens)
+    self.unigrams = dict()# used to compute V
+    self.Nc = dict()      # number of documents of klass
+    self.textC = dict()   # concat of tokens (of all docs) of klass
+    self.prior = dict()
+    self.condprob = [][]
+
   #############################################################################
   # TODO TODO TODO TODO TODO 
   
@@ -47,8 +57,24 @@ class NaiveBayes:
     """ TODO
       'words' is a list of words to classify. Return 'pos' or 'neg' classification.
     """
-    return 'pos'
-  
+    score = dict()
+    score['pos'] = 0.0
+    score['neg'] = 0.0
+
+    # extract tokens of doc from V: 
+    W = []
+    for t in words:
+      if t in self.unigrams
+        W += t
+
+    # apply
+    for k in ['pos', 'neg']:
+      score[k] = math.log(self.prior[k])
+      for t in W:
+        score[k] += math.log(self.condprob[t][k])
+
+    key_max = max(score.iteritems(), key=operator.itemgetter(1))[0]
+    return key_max
 
   def addExample(self, klass, words):
     """
@@ -58,9 +84,43 @@ class NaiveBayes:
      * You should store whatever data structures you use for your classifier 
      * in the NaiveBayes class.
      * Returns nothing
+
+     Similar to: 
+      TrainMultinomialNB(C, D) where C is a set of classes and D is a set of
+      documents
     """
+    # update V
+    for token in words:
+      if word in self.unigrams:
+        self.unigrams[word] += 1.0
+      else:
+        self.unigrams[word] = 1.0
+    self.V = len(self.unigrams)
+
+    # update textC 
+    if klass in self.textC:
+      self.textC[klass] += words      # concat words of the klass
+    else:
+      self.textC[klass] = words
+
+    # update priors
+    self.totalDocs += 1.0
+    if klass in self.Nc:
+        self.Nc[klass] += 1.0
+    else:
+        self.Nc[klass] = 1.0
+  
+    self.prior[klass] = self.Nc / self.totalsDocs
+
+    # now update the condition probabilities with add-one smoothing
+    Tc = 0.0
+    words = self.textC[klass]
+    for t in self.unigrams:
+      # num occurrences of t in all text of klass  
+      Tc = words.count(t)
+      self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
+
     pass
-      
 
   # TODO TODO TODO TODO TODO 
   #############################################################################
