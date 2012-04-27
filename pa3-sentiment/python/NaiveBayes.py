@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # NLP Programming Assignment #3
 # NaiveBayes
 # 2012
@@ -48,7 +50,7 @@ class NaiveBayes:
     self.Nc = dict()      # number of documents of klass
     self.textC = dict()   # concat of tokens (of all docs) of klass
     self.prior = dict()
-    self.condprob = [][]
+    self.condprob = dict()    # list of dict, thus making [][]
 
   #############################################################################
   # TODO TODO TODO TODO TODO 
@@ -64,7 +66,7 @@ class NaiveBayes:
     # extract tokens of doc from V: 
     W = []
     for t in words:
-      if t in self.unigrams
+      if t in self.unigrams:
         W += t
 
     # apply
@@ -91,10 +93,10 @@ class NaiveBayes:
     """
     # update V
     for token in words:
-      if word in self.unigrams:
-        self.unigrams[word] += 1.0
+      if token in self.unigrams:
+        self.unigrams[token] += 1.0
       else:
-        self.unigrams[word] = 1.0
+        self.unigrams[token] = 1.0
     self.V = len(self.unigrams)
 
     # update textC 
@@ -110,7 +112,7 @@ class NaiveBayes:
     else:
         self.Nc[klass] = 1.0
   
-    self.prior[klass] = self.Nc / self.totalsDocs
+    self.prior[klass] = (self.Nc[klass] / self.totalDocs)
 
     # now update the condition probabilities with add-one smoothing
     Tc = 0.0
@@ -118,7 +120,11 @@ class NaiveBayes:
     for t in self.unigrams:
       # num occurrences of t in all text of klass  
       Tc = words.count(t)
-      self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
+      if t in self.condprob:
+        self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
+      else:
+        self.condprob[t] = dict()
+        self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
 
     pass
 
