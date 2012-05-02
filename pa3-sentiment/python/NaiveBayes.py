@@ -46,9 +46,9 @@ class NaiveBayes:
 
     self.totalDocs = 0.0
     self.V = 0.0          # total vocabulary size (unique tokens)
-    self.unigrams = dict()# used to compute V
     self.Nc = dict()      # number of documents of klass
     self.textC = dict()   # concat of tokens (of all docs) of klass
+    self.textCounts = dict()
     self.prior = dict()
     self.condprob = dict()    # list of dict, thus making [][]
 
@@ -91,13 +91,25 @@ class NaiveBayes:
       TrainMultinomialNB(C, D) where C is a set of classes and D is a set of
       documents
     """
+    unigrams = dict()   # used to compute V
     # update V
     for token in words:
-      if token in self.unigrams:
-        self.unigrams[token] += 1.0
+      if token in unigrams:
+        unigrams[token] += 1.0
       else:
-        self.unigrams[token] = 1.0
-    self.V = len(self.unigrams)
+        unigrams[token] = 1.0
+      
+      # update text-c
+      if klass not in self.textCounts:
+        self.textCounts[klass] = dict()
+      
+      if token in self.textCounts[klass]:
+          self.textCounts[klass][token] += words.count(token)
+      else:
+          self.textCounts[klass][token] = 1.0
+
+    self.V += len(unigrams)
+
 
     # update textC 
     if klass in self.textC:
@@ -117,15 +129,23 @@ class NaiveBayes:
     # now update the condition probabilities with add-one smoothing
     Tc = 0.0
     words = self.textC[klass]
-    for t in self.unigrams:
+    print 'current doc size: %d\tsize of text in klass[%s]: %d\tsize of V: %d' % (len(unigrams), klass, len(self.textC[klass]), self.V)
+
+    for t in unigrams:
       # num occurrences of t in all text of klass  
-      Tc = words.count(t)
+      # - is probably the bottleneck: words can be upwards of 500,000 tokens!
+      # - consider keeping a running count of the tokens in klass above...
+      #Tc = words.count(t)
+      Tc = 0.0
+      if t in self.textCounts[klass]:
+        Tc = self.textCounts[klass][t]
+
       if t in self.condprob:
         self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
       else:
         self.condprob[t] = dict()
         self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
-
+    
     pass
 
   # TODO TODO TODO TODO TODO 
