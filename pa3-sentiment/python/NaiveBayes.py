@@ -51,6 +51,7 @@ class NaiveBayes:
     self.textCounts = dict()
     self.prior = dict()
     self.condprob = dict()    # list of dict, thus making [][]
+    self.unigrams = dict()
 
   #############################################################################
   # TODO TODO TODO TODO TODO 
@@ -73,7 +74,9 @@ class NaiveBayes:
     for k in ['pos', 'neg']:
       score[k] = math.log(self.prior[k])
       for t in W:
-        score[k] += math.log(self.condprob[t][k])
+        if t in self.condprob:
+          if k in self.condprob[t]:
+            score[k] += math.log(self.condprob[t][k])
 
     key_max = max(score.iteritems(), key=operator.itemgetter(1))[0]
     return key_max
@@ -91,13 +94,13 @@ class NaiveBayes:
       TrainMultinomialNB(C, D) where C is a set of classes and D is a set of
       documents
     """
-    unigrams = dict()   # used to compute V
+    #unigrams = dict()   # used to compute V
     # update V
     for token in words:
-      if token in unigrams:
-        unigrams[token] += 1.0
+      if token in self.unigrams:
+        self.unigrams[token] += 1.0
       else:
-        unigrams[token] = 1.0
+        self.unigrams[token] = 1.0
       
       # update text-c
       if klass not in self.textCounts:
@@ -108,7 +111,7 @@ class NaiveBayes:
       else:
           self.textCounts[klass][token] = 1.0
 
-    self.V += len(unigrams)
+    self.V += len(self.unigrams)
 
 
     # update textC 
@@ -129,9 +132,9 @@ class NaiveBayes:
     # now update the condition probabilities with add-one smoothing
     Tc = 0.0
     words = self.textC[klass]
-    print 'current doc size: %d\tsize of text in klass[%s]: %d\tsize of V: %d' % (len(unigrams), klass, len(self.textC[klass]), self.V)
+    #print 'unigram size: %d\tsize of text in klass[%s]: %d\tsize of V: %d' % (len(self.unigrams), klass, len(self.textC[klass]), self.V)
 
-    for t in unigrams:
+    for t in self.unigrams:
       # num occurrences of t in all text of klass  
       # - is probably the bottleneck: words can be upwards of 500,000 tokens!
       # - consider keeping a running count of the tokens in klass above...
