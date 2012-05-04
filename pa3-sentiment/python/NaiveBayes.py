@@ -40,7 +40,7 @@ class NaiveBayes:
 
   def __init__(self):
     """NaiveBayes initialization"""
-    self.FILTER_STOP_WORDS = False
+    self.FILTER_STOP_WORDS = False 
     self.stopList = set(self.readFile('../data/english.stop'))
     self.numFolds = 10
 
@@ -49,7 +49,7 @@ class NaiveBayes:
     self.Nc = dict()      # number of documents of klass
     self.textC = dict()   # concat of tokens (of all docs) of klass
     self.textCounts = dict()
-    self.prior = dict()
+    #self.prior = dict()
     self.condprob = dict()    # list of dict, thus making [][]
     self.unigrams = dict()
 
@@ -68,17 +68,23 @@ class NaiveBayes:
     W = []
     for t in words:
       if t in self.unigrams:
-        W += t
-
+        W.append(t)
+   
+    #print W 
     # apply
     for k in ['pos', 'neg']:
-      score[k] = math.log(self.prior[k])
+      #print '\tprior of %s: %s' % (k, str(self.Nc[k] / self.totalDocs) )
+      score[k] = math.log( (self.Nc[k] / self.totalDocs) )
       for t in W:
         if t in self.condprob:
           if k in self.condprob[t]:
             score[k] += math.log(self.condprob[t][k])
+            #print '\t\tcondprob of %s for %s: %s' % (t, k, str(self.condprob[t][k]) )
+
+    print 'score[pos]: %s\tscore[neg]: %s' % (str(score['pos']), str(score['neg']))
 
     key_max = max(score.iteritems(), key=operator.itemgetter(1))[0]
+
     return key_max
 
   def addExample(self, klass, words):
@@ -94,17 +100,19 @@ class NaiveBayes:
       TrainMultinomialNB(C, D) where C is a set of classes and D is a set of
       documents
     """
-    #unigrams = dict()   # used to compute V
+    # update text-c
+    if klass not in self.textCounts:
+      self.textCounts[klass] = dict()
+
     # update V
     for token in words:
+      #if token in self.stopList:
+      #  continue
+
       if token in self.unigrams:
         self.unigrams[token] += 1.0
       else:
         self.unigrams[token] = 1.0
-      
-      # update text-c
-      if klass not in self.textCounts:
-        self.textCounts[klass] = dict()
       
       if token in self.textCounts[klass]:
           self.textCounts[klass][token] += words.count(token)
@@ -126,8 +134,7 @@ class NaiveBayes:
         self.Nc[klass] += 1.0
     else:
         self.Nc[klass] = 1.0
-  
-    self.prior[klass] = (self.Nc[klass] / self.totalDocs)
+
 
     # now update the condition probabilities with add-one smoothing
     Tc = 0.0
