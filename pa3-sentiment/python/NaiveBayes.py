@@ -49,7 +49,7 @@ class NaiveBayes:
     self.Nc = dict()      # number of documents of klass
     self.textC = dict()   # concat of tokens (of all docs) of klass
     self.textCounts = dict()
-    #self.prior = dict()
+    self.klasses = [] 
     self.condprob = dict()    # list of dict, thus making [][]
     self.unigrams = dict()
 
@@ -100,27 +100,26 @@ class NaiveBayes:
       TrainMultinomialNB(C, D) where C is a set of classes and D is a set of
       documents
     """
+    if klass not in self.klasses:
+      self.klasses.append(klass)
+
     # update text-c
     if klass not in self.textCounts:
       self.textCounts[klass] = dict()
 
-    # update V
+    # update unigrams
     for token in words:
-      #if token in self.stopList:
-      #  continue
-
       if token in self.unigrams:
         self.unigrams[token] += 1.0
       else:
         self.unigrams[token] = 1.0
       
-      if token in self.textCounts[klass]:
-          self.textCounts[klass][token] += words.count(token)
-      else:
-          self.textCounts[klass][token] = 1.0
-
-    self.V += len(self.unigrams)
-
+    for t in self.unigrams:
+      if t not in self.textCounts[klass]:
+        self.textCounts[klass][t] = 0.0
+      self.textCounts[klass][t] += words.count(t)
+    
+    self.V = len(self.unigrams)
 
     # update textC 
     if klass in self.textC:
@@ -135,26 +134,27 @@ class NaiveBayes:
     else:
         self.Nc[klass] = 1.0
 
-
     # now update the condition probabilities with add-one smoothing
     Tc = 0.0
-    words = self.textC[klass]
+    for k in self.klasses:
+      for t in self.unigrams:
+        if k in self.textC and k in self.textCounts:
+          words = self.textC[k]
     #print 'unigram size: %d\tsize of text in klass[%s]: %d\tsize of V: %d' % (len(self.unigrams), klass, len(self.textC[klass]), self.V)
 
-    for t in self.unigrams:
-      # num occurrences of t in all text of klass  
-      # - is probably the bottleneck: words can be upwards of 500,000 tokens!
-      # - consider keeping a running count of the tokens in klass above...
-      #Tc = words.count(t)
-      Tc = 0.0
-      if t in self.textCounts[klass]:
-        Tc = self.textCounts[klass][t]
+          # num occurrences of t in all text of klass  
+          # - is probably the bottleneck: words can be upwards of 500,000 tokens!
+          # - consider keeping a running count of the tokens in klass above...
+          #Tc = words.count(t)
+          Tc = 0.0
+          if t in self.textCounts[k]:
+            Tc = self.textCounts[k][t]
 
-      if t in self.condprob:
-        self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
-      else:
-        self.condprob[t] = dict()
-        self.condprob[t][klass] = (Tc + 1.0) / (len(words) + self.V)
+          if t in self.condprob:
+            self.condprob[t][k] = (Tc + 1.0) / (len(words) + self.V)
+          else:
+            self.condprob[t] = dict()
+            self.condprob[t][k] = (Tc + 1.0) / (len(words) + self.V)
     
     pass
 
