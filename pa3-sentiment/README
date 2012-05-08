@@ -1,0 +1,24 @@
+
+NOTES:
+- The NB implementation does work, but a massive optimization is needed, because
+it loops over the unigrams dict two or three times, depending on the number of the
+number of classes (2).  Optimize it!
+
+LINKS:
+
+Articles essentially backing up why we are narcissistic, prone to
+self-disclosure, etc.:
+http://www.theatlantic.com/national/archive/2012/05/millennials-the-greatest-generation-or-the-most-narcissistic/256638/
+meso-limbic region, dopamine!
+http://topics.wsj.com/article/SB10001424052702304451104577390392329291890.html
+
+
+POS tagging for Twitter:
+http://www.ark.cs.cmu.edu/TweetNLP/gimpel+etal.acl11.pdf
+
+TweetMotif by Brendan O'Connor:
+http://brenocon.com/oconnor_krieger_ahn.icwsm2010.tweetmotif.pdf
+
+Sentiment Symposium - Chris Potts
+http://sentiment.christopherpotts.net/classifiers.html
+
