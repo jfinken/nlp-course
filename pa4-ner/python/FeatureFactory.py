@@ -36,6 +36,11 @@ class FeatureFactory:
 
 
 	""" TODO: Add your features here """
+        if currentWord[0].isupper():
+           features.append("case=Title")
+        if (position+1) < len(words):
+          if words[position+1].isupper():
+            features.append("next_case=AllUpper")
 
         return features
 
